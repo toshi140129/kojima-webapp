@@ -9,6 +9,9 @@ export type Racer = {
   boat2: string;
   exTime: string;
   exST: string;
+  tilt: string;
+  exIri: string;
+  actualIri: string;
   fNum: string;
   lNum: string;
 };

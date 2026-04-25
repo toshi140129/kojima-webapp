@@ -28,23 +28,51 @@ function parseCSV(text: string): Race[] {
 function parseRow(line: string): Race | null {
   const cols = line.split(",");
   if (cols.length < 15) return null;
+  // スキーマ自動判定: 1艇あたりのカラム数 = (total - 15固定列) / 6艇
+  // v1: 12 (87列), v2: 15 (105列)
+  const perBoat = Math.floor((cols.length - 15) / 6);
+  const isV2 = perBoat >= 15;
   const racers: Racer[] = [];
   for (let i = 0; i < 6; i++) {
-    const base = 15 + i * 12;
-    racers.push({
-      name: cols[base] ?? "",
-      grade: cols[base + 1] ?? "",
-      zenkokuWin: cols[base + 2] ?? "",
-      zenkoku2: cols[base + 3] ?? "",
-      touchiWin: cols[base + 4] ?? "",
-      kosetsu: cols[base + 5] ?? "",
-      motor2: cols[base + 6] ?? "",
-      boat2: cols[base + 7] ?? "",
-      exTime: cols[base + 8] ?? "",
-      exST: cols[base + 9] ?? "",
-      fNum: cols[base + 10] ?? "",
-      lNum: cols[base + 11] ?? "",
-    });
+    const base = 15 + i * perBoat;
+    if (isV2) {
+      racers.push({
+        name: cols[base] ?? "",
+        grade: cols[base + 1] ?? "",
+        zenkokuWin: cols[base + 2] ?? "",
+        zenkoku2: cols[base + 3] ?? "",
+        touchiWin: cols[base + 4] ?? "",
+        kosetsu: cols[base + 5] ?? "",
+        motor2: cols[base + 6] ?? "",
+        boat2: cols[base + 7] ?? "",
+        exTime: cols[base + 8] ?? "",
+        exST: cols[base + 9] ?? "",
+        tilt: cols[base + 10] ?? "",
+        exIri: cols[base + 11] ?? "",
+        actualIri: cols[base + 12] ?? "",
+        fNum: cols[base + 13] ?? "",
+        lNum: cols[base + 14] ?? "",
+      });
+    } else {
+      // v1 互換（チルト・進入は空）
+      racers.push({
+        name: cols[base] ?? "",
+        grade: cols[base + 1] ?? "",
+        zenkokuWin: cols[base + 2] ?? "",
+        zenkoku2: cols[base + 3] ?? "",
+        touchiWin: cols[base + 4] ?? "",
+        kosetsu: cols[base + 5] ?? "",
+        motor2: cols[base + 6] ?? "",
+        boat2: cols[base + 7] ?? "",
+        exTime: cols[base + 8] ?? "",
+        exST: cols[base + 9] ?? "",
+        tilt: "",
+        exIri: "",
+        actualIri: "",
+        fNum: cols[base + 10] ?? "",
+        lNum: cols[base + 11] ?? "",
+      });
+    }
   }
   return {
     date: cols[0],
